@@ -68,8 +68,18 @@ const App = {
             context.fill (region)
         },
 
-        capture : function (x,y) {
+        capture : function (context, x,y) {
             this.capturedPoints.push ([x,y])
+
+            let region = new Path2D()
+            region.moveTo(x, y)
+            region.lineTo(x+2,y)
+            region.lineTo(x+2,y+2)
+            region.lineTo(x,y+2)
+            region.lineTo(x,y)
+
+            context.fillStyle = "#000000"
+            context.fill (region)
         },
 
         finish_capturing : function () {
@@ -107,6 +117,8 @@ const App = {
         const theCanvas = document.getElementById ("theCanvas")
         const context = theCanvas.getContext ("2d")
 
+        this.restoreImage (context)
+
         document.getElementById("theStartButton").addEventListener ("click", () => App.restoreImage (context))
 
         var isShaving = false;
@@ -130,7 +142,7 @@ const App = {
                 isCapturing = false;
                 this.yak.finish_capturing ();
                 this.needToCapture = false;
-                document.getElementById("theStatusBar").innerText = "Keep shaving";
+                document.getElementById("theStatusBar").innerText = "Keep shaving using your mouse";
             }
             else
             {
@@ -146,7 +158,7 @@ const App = {
             }
             else if (isCapturing)
             {
-                this.yak.capture (e.offsetX, e.offsetY)
+                this.yak.capture (context, e.offsetX, e.offsetY)
             }
         })
     },
@@ -156,7 +168,7 @@ const App = {
         const theImg = document.getElementById ("theImg")
         context.drawImage (theImg,0,0,640,480)
         this.needToCapture = true;
-        document.getElementById("theStatusBar").innerText = "Trace the area you want to shave";
+        document.getElementById("theStatusBar").innerText = "Trace the area you want to shave using your mouse";
     }
 };
 
